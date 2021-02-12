@@ -42,7 +42,7 @@ fn main() {
     let mut config = cmake::Config::new("liboqs");
     config.profile("Release");
     config.define("OQS_BUILD_ONLY_LIB", "Yes");
-    if cfg!(feature = "openssl") {
+    if cfg!(all(not(windows), feature = "openssl")) {
         config.define("OQS_USE_OPENSSL", "Yes");
         println!("cargo:rustc-link-lib=crypto");
     } else {
@@ -53,7 +53,7 @@ fn main() {
     // lib is put into $outdir/build/lib
     let libdir = outdir.join("build").join("lib");
     println!("cargo:rustc-link-search=native={}", libdir.display());
-    println!("cargo:rustc-link-lib=static=oqs");
+    println!("cargo:rustc-link-lib=oqs");
     let gen_bindings = |file, filter| generate_bindings(&outdir, file, filter);
 
     gen_bindings("common", "OQS_.*");
